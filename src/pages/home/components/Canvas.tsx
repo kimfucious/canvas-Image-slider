@@ -36,7 +36,7 @@ export default function Canvas({ height, state, setState, width }: Props) {
             const movementAmount = Math.abs(movementX.current);
             const diff = canvas.width - movementAmount;
             let currentIndex = state.currentImageIndex;
-            if (movementAmount > canvas.width / 8 && isSlideAllowed.current) {
+            if (movementAmount > canvas.width / 12 && isSlideAllowed.current) {
                 console.log("%cGonna finish slide", "color:lime");
                 if (movementX.current < 0) {
                     sliderX.current -= diff;
