@@ -36,7 +36,7 @@ export default function Canvas({ height, state, setState, width }: Props) {
             const movementAmount = Math.abs(movementX.current);
             const diff = canvas.width - movementAmount;
             let currentIndex = state.currentImageIndex;
-            if (movementAmount > canvas.width / 3 && isSlideAllowed.current) {
+            if (movementAmount > canvas.width / 8 && isSlideAllowed.current) {
                 console.log("%cGonna finish slide", "color:lime");
                 if (movementX.current < 0) {
                     sliderX.current -= diff;
@@ -56,10 +56,6 @@ export default function Canvas({ height, state, setState, width }: Props) {
                 });
             } else {
                 console.log("%cGonna undo slide", "color:yellow");
-                console.log(
-                    `%cCurrent Image Index: ${state.currentImageIndex}`,
-                    "color:yellow"
-                );
                 sliderX.current = state.currentImageIndex * canvas.width * -1;
                 console.log(
                     `%cReverted SliderX: ${sliderX.current}`,
@@ -116,11 +112,7 @@ export default function Canvas({ height, state, setState, width }: Props) {
                         isSlideAllowed.current = true;
                     }
                     sliderX.current += e.movementX;
-                    /* FIXME: needed to cause refresh, but refresh causes flicker
-                       Need to look at requestAnimationFrame
-                    */
                     setState({ ...state, movement: sliderX.current });
-                    // console.log("I'm dragging!", sliderX.current);
                 }
             };
             canvas.onmouseup = (e) => {
