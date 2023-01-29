@@ -1,7 +1,8 @@
 import { loadImageData } from "../../actions/imageActions";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
+import ProgressIndicator from "./components/ProgressIndicator";
 import type { SliderImage } from "../../types";
 
 export interface HomeState {
@@ -22,6 +23,7 @@ interface Props {
     navbarOffset: number;
 }
 export default function Home({ navbarOffset }: Props) {
+    const currentIndex = useRef(0);
     const [, viewportWidth] = useWindowSize();
     const [state, setState] = useState(initialState);
 
@@ -55,14 +57,16 @@ export default function Home({ navbarOffset }: Props) {
             style={{ marginTop: navbarOffset }}
         >
             <Canvas
+                currentIndex={currentIndex}
                 height={canvasHeight}
                 width={canvasWidth}
                 state={state}
                 setState={setState}
             />
-            {/* <div className="mt-3">
-                put indicator here
-            </div> */}
+            <ProgressIndicator
+                canvasWidth={canvasWidth}
+                currentIndex={currentIndex}
+            />
         </div>
     ) : (
         <div
