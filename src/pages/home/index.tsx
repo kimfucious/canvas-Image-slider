@@ -66,6 +66,7 @@ export default function Home({ navbarOffset }: Props) {
             <ProgressIndicator
                 canvasWidth={canvasWidth}
                 currentIndex={currentIndex}
+                state={state}
             />
         </div>
     ) : (
