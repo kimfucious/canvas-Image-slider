@@ -79,12 +79,10 @@ function renderImage(
     let height = image.height * scaleFactor;
     let width = image.width * scaleFactor;
     if (image.height >= ctx.canvas.height || image.width >= ctx.canvas.height) {
-        height -= 50;
-        width -= 50;
+        height -= ctx.canvas.width < 640 ? 28 : 48;
+        width -= ctx.canvas.width < 640 ? 28 : 48;
     }
-    const x =
-        // offset + sliderX + (ctx.canvas.width - image.width * scaleFactor) / 2;
-        offset + sliderX + (ctx.canvas.width - width) / 2;
+    const x = offset + sliderX + (ctx.canvas.width - width) / 2;
     const y = (ctx.canvas.height - height) / 2;
     ctx.drawImage(
         image,
