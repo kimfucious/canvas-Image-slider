@@ -46,8 +46,6 @@ export default function Home({ navbarOffset }: Props) {
             canvasHeight = 480;
             canvasWidth = 640;
         }
-        console.log("new canvas height", canvasHeight);
-        console.log("new canvas width", canvasWidth);
         return { canvasHeight, canvasWidth };
     }, [viewportWidth]);
 
