@@ -1,6 +1,5 @@
 import { Circle } from "tabler-icons-react";
 import { HomeState } from "..";
-import { loadImages } from "../../../actions/imageActions";
 
 interface Props {
     canvasWidth: number;
