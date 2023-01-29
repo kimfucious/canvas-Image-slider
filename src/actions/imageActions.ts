@@ -84,6 +84,7 @@ function renderImage(
     }
     const x = offset + sliderX + (ctx.canvas.width - width) / 2;
     const y = (ctx.canvas.height - height) / 2;
+
     ctx.drawImage(
         image,
         Math.round(x),
