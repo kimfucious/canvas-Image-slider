@@ -182,7 +182,7 @@ export default function Canvas({
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
             setTimeout(() => {
-                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                 ctx.fillStyle = isDark
                     ? "rgb(43, 48, 53)"
                     : "rgb(248, 249, 250)";
