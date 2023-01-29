@@ -41,9 +41,9 @@ function loadImage(
         const image = new Image();
         image.src = images[idx].path;
         image.onload = () => {
-            console.log("SliderX is:", sliderX);
+            // console.log("SliderX is:", sliderX);
             const offset = idx * ctx.canvas.width;
-            console.log("offset is:", offset);
+            // console.log("offset is:", offset);
             const description = images[idx].altText;
             renderImage(ctx, description, image, offset, sliderX);
         };
@@ -55,7 +55,7 @@ export function loadImages(
     images: SliderImage[],
     sliderX: number
 ) {
-    console.log(`Loading ${images.length} images...`);
+    // console.log(`Loading ${images.length} images...`);
     images.forEach((_, idx) => loadImage(ctx, idx, images, sliderX));
 }
 
@@ -66,7 +66,7 @@ function renderImage(
     offset: number,
     sliderX: number
 ) {
-    console.log(`Rendering ${description}...`);
+    // console.log(`Rendering ${description}...`);
     const cAspectRatio = ctx.canvas.width / ctx.canvas.height;
     const iAspectRatio = image.width / image.height;
     const scaleFactor = getImageScale(
