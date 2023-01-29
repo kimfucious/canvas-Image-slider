@@ -1,14 +1,21 @@
 import { Circle } from "tabler-icons-react";
+import { HomeState } from "..";
+import { loadImages } from "../../../actions/imageActions";
 
 interface Props {
     canvasWidth: number;
     currentIndex: React.MutableRefObject<number>;
+    state: HomeState;
 }
 interface DotProps {
     idx: number;
 }
 
-export default function ProgressIndicator({canvasWidth, currentIndex }: Props) {
+export default function ProgressIndicator({
+    canvasWidth,
+    currentIndex,
+    state,
+}: Props) {
     const size = canvasWidth < 640 ? 10 : 14;
     const margin = "1";
     const className = `mx-${margin} px-0`;
@@ -28,11 +35,9 @@ export default function ProgressIndicator({canvasWidth, currentIndex }: Props) {
         );
     }
     function renderDots() {
-        const arr = [];
-        for (let i = 0; i < 9; i++) {
-            arr.push(<Dot idx={i} />);
-        }
-        return arr;
+        return state.images.map((image, idx) => (
+            <Dot key={image.path} idx={idx} />
+        ));
     }
     return <div>{renderDots()}</div>;
 }
