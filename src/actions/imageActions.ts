@@ -59,6 +59,7 @@ export function loadImages(
     images.forEach((_, idx) => loadImage(ctx, idx, images, sliderX));
 }
 
+// https://stackoverflow.com/questions/39130829/png-image-choppy-when-i-try-to-move-it-in-html5-canvas
 function renderImage(
     ctx: CanvasRenderingContext2D,
     description: string,
