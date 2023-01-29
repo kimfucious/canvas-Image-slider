@@ -188,15 +188,22 @@ export default function Canvas({
                     : "rgb(248, 249, 250)";
                 ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                 loadImages(ctx, state.images, sliderX.current);
-            }, 60);
+            }, ctx.canvas.width < 640 ? 60 : 0);
+
             // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
             // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             // loadImages(ctx, state.images, sliderX.current);
             // requestAnimationFrame(animate);
         } else {
-            console.log("%cNo context in Canvas component", "color: hotpink");
+            console.log("%cNo context in Canvas component!", "color: hotpink");
         }
+        // return () => {
+        //     if (timeout) {
+        //         console.log("clearing timeout");
+        //         clearTimeout(timeout);
+        //     }
+        // };
     }, [isDark, state.images, state.movement, width]);
 
     return (
