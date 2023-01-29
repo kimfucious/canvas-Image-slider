@@ -5,8 +5,6 @@ import Canvas from "./components/";
 import type { SliderImage } from "../../types";
 
 export interface HomeState {
-    currentImage?: SliderImage;
-    currentImageIndex: number;
     images: SliderImage[];
     isDragging: boolean;
     isMouseInCanvas: boolean;
@@ -14,8 +12,6 @@ export interface HomeState {
 }
 
 const initialState: HomeState = {
-    currentImage: undefined,
-    currentImageIndex: 0,
     images: [],
     isDragging: false,
     isMouseInCanvas: false,
@@ -35,8 +31,6 @@ export default function Home({ navbarOffset }: Props) {
             setState({
                 ...state,
                 images: resp,
-                currentImage: resp[0],
-                currentImageIndex: 0,
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +51,7 @@ export default function Home({ navbarOffset }: Props) {
         return { canvasHeight, canvasWidth };
     }, [viewportWidth]);
 
-    return state.currentImage ? (
+    return state.images.length ? (
         <div
             className="container py-5 d-flex flex-column align-items-center justify-content-center"
             style={{ marginTop: navbarOffset }}
