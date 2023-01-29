@@ -166,7 +166,6 @@ export default function Canvas({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isDragging, state.isMouseInCanvas]);
 
-
     useEffect(() => {
         // I don't get how this is supposed to work, yet.
         // function animate() {
@@ -182,10 +181,18 @@ export default function Canvas({
         // }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
-            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            loadImages(ctx, state.images, sliderX.current);
+            setTimeout(() => {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = isDark
+                    ? "rgb(43, 48, 53)"
+                    : "rgb(248, 249, 250)";
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                loadImages(ctx, state.images, sliderX.current);
+            }, 30);
+            // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
+            // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            // loadImages(ctx, state.images, sliderX.current);
             // requestAnimationFrame(animate);
         } else {
             console.log("%cNo context in Canvas component", "color: hotpink");
