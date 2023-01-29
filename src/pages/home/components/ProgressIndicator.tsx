@@ -29,7 +29,7 @@ export default function ProgressIndicator({canvasWidth, currentIndex }: Props) {
     }
     function renderDots() {
         const arr = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 9; i++) {
             arr.push(<Dot idx={i} />);
         }
         return arr;
