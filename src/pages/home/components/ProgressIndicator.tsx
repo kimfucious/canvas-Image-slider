@@ -35,7 +35,7 @@ export default function ProgressIndicator({
     }
     function renderDots() {
         return state.images.map((image, idx) => (
-            <Dot key={image.path} idx={idx} />
+            <Dot key={image.src} idx={idx} />
         ));
     }
     return <div>{renderDots()}</div>;
