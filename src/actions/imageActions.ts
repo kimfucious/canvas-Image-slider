@@ -31,9 +31,7 @@ export function loadImages() {
         ];
 
         const images = getLoadedImages(imageData);
-        console.log("preloadedImages", images);
         return images;
-        // return imageData;
     } catch (error) {
         throw error;
     }
@@ -53,7 +51,7 @@ function getLoadedImages(imageData: ImageData[]): HTMLImageElement[] {
             // if (loadCount === loadTotal) {
             //     isImagesPreloaded = true;
             // }
-            console.log(`Image loaded:`, image.altText);
+            console.log("%cImage loaded:", "color:lime", image.altText);
         };
         // Set the source url of the image
         imgEl.src = imageData[idx].path;
@@ -79,12 +77,7 @@ function renderImage(
 ) {
     const cAspectRatio = ctx.canvas.width / ctx.canvas.height;
     const iAspectRatio = image.width / image.height;
-    const scaleFactor = getImageScale(
-        cAspectRatio,
-        ctx,
-        iAspectRatio,
-        image
-    );
+    const scaleFactor = getImageScale(cAspectRatio, ctx, iAspectRatio, image);
     let height = image.height * scaleFactor;
     let width = image.width * scaleFactor;
     /* This adds spacing around each image so they don't butt up against each other
