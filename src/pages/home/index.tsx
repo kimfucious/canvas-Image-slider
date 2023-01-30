@@ -5,6 +5,7 @@ import Canvas from "./components/";
 import ProgressIndicator from "./components/ProgressIndicator";
 
 export interface HomeState {
+    areImagesLoaded: boolean;
     images: HTMLImageElement[];
     isDragging: boolean;
     isMouseInCanvas: boolean;
@@ -12,6 +13,7 @@ export interface HomeState {
 }
 
 const initialState: HomeState = {
+    areImagesLoaded: false,
     images: [],
     isDragging: false,
     isMouseInCanvas: false,
@@ -27,7 +29,7 @@ export default function Home({ navbarOffset }: Props) {
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
-        const resp = loadImages();
+        const resp = loadImages(state, setState);
         if (resp.length) {
             setState({
                 ...state,
