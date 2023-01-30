@@ -176,18 +176,16 @@ export default function Canvas({
         // }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
-            setTimeout(
-                () => {
-                    // this increases flicker
-                    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                    ctx.fillStyle = isDark
-                        ? "rgb(43, 48, 53)"
-                        : "rgb(248, 249, 250)";
-                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                    loadImages(ctx, state.images, sliderX.current);
-                },
-                ctx.canvas.width < 640 ? 60 : 0
-            );
+            const timeout = ctx.canvas.width < 640 ? 1000 / 10 : 0;
+            setTimeout(() => {
+                // this increases flicker
+                // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = isDark
+                    ? "rgb(43, 48, 53)"
+                    : "rgb(248, 249, 250)";
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                loadImages(ctx, state.images, sliderX.current);
+            }, timeout);
 
             // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
