@@ -25,6 +25,14 @@ export default function Canvas({
     const movementX = useRef(0);
     const sliderX = useRef(0);
 
+    function slideCanSlide() {
+        return (
+            (movementX.current > 0 && currentIndex.current === 0) ||
+            (movementX.current < 0 &&
+                currentIndex.current === state.images.length - 1)
+        );
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
         function handleSlide() {
@@ -106,17 +114,10 @@ export default function Canvas({
             canvas.onmousemove = (e) => {
                 if (state.isDragging) {
                     movementX.current += e.movementX;
-                    if (
-                        (movementX.current > 0 &&
-                            currentIndex?.current === 0) ||
-                        (movementX.current < 0 &&
-                            currentIndex.current === state.images.length - 1)
-                    ) {
-                        // console.log("%cDisallowing slide", "color:yellow");
+                    if (slideCanSlide()) {
                         isSlideAllowed.current = false;
                         return;
                     } else {
-                        // console.log("%cAllowing slide", "color: lime");
                         isSlideAllowed.current = true;
                     }
                     sliderX.current += e.movementX;
@@ -133,16 +134,10 @@ export default function Canvas({
                     ? touch.clientX - previousTouchX
                     : 0;
                 movementX.current += deltaX;
-                if (
-                    (movementX.current > 0 && currentIndex.current === 0) ||
-                    (movementX.current < 0 &&
-                        currentIndex.current === state.images.length - 1)
-                ) {
-                    console.log("%cDisallowing slide", "color:orange");
+                if (slideCanSlide()) {
                     isSlideAllowed.current = false;
                     return;
                 } else {
-                    // console.log("%cAllowing slide", "color: lime");
                     isSlideAllowed.current = true;
                 }
                 sliderX.current += deltaX;
@@ -181,14 +176,18 @@ export default function Canvas({
         // }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
-            setTimeout(() => {
-                // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                ctx.fillStyle = isDark
-                    ? "rgb(43, 48, 53)"
-                    : "rgb(248, 249, 250)";
-                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                loadImages(ctx, state.images, sliderX.current);
-            }, ctx.canvas.width < 640 ? 60 : 0);
+            setTimeout(
+                () => {
+                    // this increases flicker
+                    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.fillStyle = isDark
+                        ? "rgb(43, 48, 53)"
+                        : "rgb(248, 249, 250)";
+                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    loadImages(ctx, state.images, sliderX.current);
+                },
+                ctx.canvas.width < 640 ? 60 : 0
+            );
 
             // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
