@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ColorThemeMode } from "../../../types/colorTheme";
 import { HomeState } from "..";
-import { loadImages } from "../../../actions/imageActions";
+import { renderImages } from "../../../actions/imageActions";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 
 interface Props {
@@ -184,7 +184,7 @@ export default function Canvas({
                     ? "rgb(43, 48, 53)"
                     : "rgb(248, 249, 250)";
                 ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                loadImages(ctx, state.images, sliderX.current);
+                renderImages(ctx, state.images, sliderX.current);
             }, timeout);
 
             // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
