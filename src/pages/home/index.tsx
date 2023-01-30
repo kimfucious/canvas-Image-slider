@@ -1,12 +1,11 @@
-import { loadImageData } from "../../actions/imageActions";
+import { loadImages } from "../../actions/imageActions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
 import ProgressIndicator from "./components/ProgressIndicator";
-import type { ImageData } from "../../types";
 
 export interface HomeState {
-    images: ImageData[];
+    images: HTMLImageElement[];
     isDragging: boolean;
     isMouseInCanvas: boolean;
     movement: number;
@@ -28,7 +27,7 @@ export default function Home({ navbarOffset }: Props) {
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
-        const resp = loadImageData();
+        const resp = loadImages();
         if (resp.length) {
             setState({
                 ...state,
