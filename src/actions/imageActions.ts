@@ -8,12 +8,13 @@ import image_7 from "../assets/images/pt_2.webp";
 import image_8 from "../assets/images/bm_mj_pt.webp";
 import image_9 from "../assets/images/sd.webp";
 import type { ImageData } from "../types";
+import { HomeState } from "../pages/home";
 
-// let loadCount = 0;
-// let loadTotal = 0;
+let loadCount = 0;
+let loadTotal = 0;
 // let isImagesPreloaded = false;
 
-export function loadImages() {
+export function loadImages(state: HomeState, setState: (s: HomeState) => void) {
     try {
         const imageData: ImageData[] = [
             { path: image_1, altText: "Bob Marley" },
@@ -30,30 +31,42 @@ export function loadImages() {
             { path: image_9, altText: "Snoop Diggity" },
         ];
 
-        const images = getLoadedImages(imageData);
+        const images = getLoadedImages(imageData, state, setState);
         return images;
     } catch (error) {
         throw error;
     }
 }
 
-function getLoadedImages(imageData: ImageData[]): HTMLImageElement[] {
+function getLoadedImages(
+    imageData: ImageData[],
+    state: HomeState,
+    setState: (s: HomeState) => void
+): HTMLImageElement[] {
     // Initialize variables
-    // loadCount = 0;
-    // loadTotal = imageData.length;
+    loadCount = 0;
+    loadTotal = imageData.length;
     // isImagesPreloaded = false;
 
     var loadedImages: HTMLImageElement[] = [];
     imageData.forEach((image, idx) => {
         const imgEl = new Image();
         imgEl.onload = function () {
-            // loadCount++;
-            // if (loadCount === loadTotal) {
-            //     isImagesPreloaded = true;
-            // }
             console.log("%cImage loaded:", "color:lime", image.altText);
+            loadCount++;
+            if (loadCount === imageData.length) {
+                console.log(
+                    `%cAll ${loadTotal} images have been loaded.`,
+                    "color:green"
+                );
+                // console.log(
+                //     `%cSetting state to allImagesLoadedTrue!`,
+                //     "color:cyan"
+                // );
+                // setting state here fucks things up
+                // setState({ ...state, areImagesLoaded: true });
+            }
         };
-        // Set the source url of the image
         imgEl.src = imageData[idx].path;
         loadedImages[idx] = imgEl;
     });
@@ -66,6 +79,7 @@ export function renderImages(
     images: HTMLImageElement[],
     sliderX: number
 ) {
+    console.log("%cRendering images...", "color: cyan");
     images.forEach((image, idx) => renderImage(ctx, image, idx, sliderX));
 }
 
@@ -90,7 +104,6 @@ function renderImage(
     const offset = idx * ctx.canvas.width;
     const x = offset + sliderX + (ctx.canvas.width - width) / 2;
     const y = (ctx.canvas.height - height) / 2;
-
     ctx.drawImage(
         image,
         Math.round(x),
