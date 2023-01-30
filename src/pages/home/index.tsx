@@ -3,10 +3,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
 import ProgressIndicator from "./components/ProgressIndicator";
-import type { SliderImage } from "../../types";
+import type { ImageData } from "../../types";
 
 export interface HomeState {
-    images: SliderImage[];
+    images: ImageData[];
     isDragging: boolean;
     isMouseInCanvas: boolean;
     movement: number;

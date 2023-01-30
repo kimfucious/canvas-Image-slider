@@ -8,7 +8,7 @@ export enum ElName {
     "VIEWER_CONTROLS" = "viewer-controls",
 }
 
-export interface SliderImage {
+export interface ImageData {
     path: string;
     altText: string;
 }

@@ -7,11 +7,11 @@ import image_6 from "../assets/images/sly_and_robbie.webp";
 import image_7 from "../assets/images/pt_2.webp";
 import image_8 from "../assets/images/bm_mj_pt.webp";
 import image_9 from "../assets/images/sd.webp";
-import type { SliderImage } from "../types";
+import type { ImageData } from "../types";
 
 export function loadImageData() {
     try {
-        const images: SliderImage[] = [
+        const images: ImageData[] = [
             { path: image_1, altText: "Bob Marley" },
             { path: image_2, altText: "Peter Tosh" },
             { path: image_3, altText: "Bunny Wailer" },
@@ -34,7 +34,7 @@ export function loadImageData() {
 function loadImage(
     ctx: CanvasRenderingContext2D,
     idx: number,
-    images: SliderImage[],
+    images: ImageData[],
     sliderX: number
 ) {
     if (idx >= 0 && idx < images.length) {
@@ -52,7 +52,7 @@ function loadImage(
 
 export function loadImages(
     ctx: CanvasRenderingContext2D,
-    images: SliderImage[],
+    images: ImageData[],
     sliderX: number
 ) {
     // console.log(`Loading ${images.length} images...`);
