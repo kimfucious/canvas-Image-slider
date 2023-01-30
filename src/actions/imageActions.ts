@@ -9,9 +9,13 @@ import image_8 from "../assets/images/bm_mj_pt.webp";
 import image_9 from "../assets/images/sd.webp";
 import type { ImageData } from "../types";
 
-export function loadImageData() {
+// let loadCount = 0;
+// let loadTotal = 0;
+// let isImagesPreloaded = false;
+
+export function loadImages() {
     try {
-        const images: ImageData[] = [
+        const imageData: ImageData[] = [
             { path: image_1, altText: "Bob Marley" },
             { path: image_2, altText: "Peter Tosh" },
             { path: image_3, altText: "Bunny Wailer" },
@@ -25,55 +29,59 @@ export function loadImageData() {
             },
             { path: image_9, altText: "Snoop Diggity" },
         ];
+
+        const images = getLoadedImages(imageData);
+        console.log("preloadedImages", images);
         return images;
+        // return imageData;
     } catch (error) {
         throw error;
     }
 }
 
-function loadImage(
-    ctx: CanvasRenderingContext2D,
-    idx: number,
-    images: ImageData[],
-    sliderX: number
-) {
-    if (idx >= 0 && idx < images.length) {
-        const image = new Image();
-        image.src = images[idx].path;
-        image.onload = () => {
-            // console.log("SliderX is:", sliderX);
-            const offset = idx * ctx.canvas.width;
-            // console.log("offset is:", offset);
-            const description = images[idx].altText;
-            renderImage(ctx, description, image, offset, sliderX);
+function getLoadedImages(imageData: ImageData[]): HTMLImageElement[] {
+    // Initialize variables
+    // loadCount = 0;
+    // loadTotal = imageData.length;
+    // isImagesPreloaded = false;
+
+    var loadedImages: HTMLImageElement[] = [];
+    imageData.forEach((image, idx) => {
+        const imgEl = new Image();
+        imgEl.onload = function () {
+            // loadCount++;
+            // if (loadCount === loadTotal) {
+            //     isImagesPreloaded = true;
+            // }
+            console.log(`Image loaded:`, image.altText);
         };
-    }
+        // Set the source url of the image
+        imgEl.src = imageData[idx].path;
+        loadedImages[idx] = imgEl;
+    });
+
+    return loadedImages;
 }
 
-export function loadImages(
+export function renderImages(
     ctx: CanvasRenderingContext2D,
-    images: ImageData[],
+    images: HTMLImageElement[],
     sliderX: number
 ) {
-    // console.log(`Loading ${images.length} images...`);
-    images.forEach((_, idx) => loadImage(ctx, idx, images, sliderX));
+    images.forEach((image, idx) => renderImage(ctx, image, idx, sliderX));
 }
 
-// https://stackoverflow.com/questions/39130829/png-image-choppy-when-i-try-to-move-it-in-html5-canvas
 function renderImage(
     ctx: CanvasRenderingContext2D,
-    description: string,
     image: HTMLImageElement,
-    offset: number,
+    idx: number,
     sliderX: number
 ) {
-    // console.log(`Rendering ${description}...`);
     const cAspectRatio = ctx.canvas.width / ctx.canvas.height;
     const iAspectRatio = image.width / image.height;
     const scaleFactor = getImageScale(
         cAspectRatio,
         ctx,
-        description,
         iAspectRatio,
         image
     );
@@ -86,6 +94,7 @@ function renderImage(
         height -= ctx.canvas.width < 640 ? 28 : 48;
         width -= ctx.canvas.width < 640 ? 28 : 48;
     }
+    const offset = idx * ctx.canvas.width;
     const x = offset + sliderX + (ctx.canvas.width - width) / 2;
     const y = (ctx.canvas.height - height) / 2;
 
@@ -105,7 +114,6 @@ function renderImage(
 function getImageScale(
     cAspectRatio: number,
     ctx: CanvasRenderingContext2D,
-    description: string,
     iAspectRatio: number,
     image: HTMLImageElement
 ) {
