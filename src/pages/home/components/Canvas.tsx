@@ -34,6 +34,7 @@ export default function Canvas({
     }
 
     useEffect(() => {
+        console.log("firing effect 1");
         const canvas = canvasRef.current;
         function handleSlide() {
             /*
@@ -162,6 +163,7 @@ export default function Canvas({
     }, [state.isDragging, state.isMouseInCanvas]);
 
     useEffect(() => {
+        console.log("firing effect 2");
         // I don't get how this is supposed to work, yet.
         // function animate() {
         //     const ctx = canvasRef.current?.getContext("2d", { alpha: false });
@@ -176,7 +178,8 @@ export default function Canvas({
         // }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
-            const timeout = ctx.canvas.width < 640 ? 1000 / 10 : 0;
+            // const timeout = ctx.canvas.width < 640 ? 1000 / 10 : 0;
+            const timeout = 1000 / 60 
             setTimeout(() => {
                 // this increases flicker
                 // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
