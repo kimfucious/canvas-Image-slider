@@ -179,7 +179,7 @@ export default function Canvas({
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
             // const timeout = ctx.canvas.width < 640 ? 1000 / 10 : 0;
-            const timeout = 1000 / 60 
+            // const timeout = 1000 / 60 
             setTimeout(() => {
                 // this increases flicker
                 // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
