@@ -5,7 +5,6 @@ export interface ElHeight {
 
 export enum ElName {
     "NAVBAR" = "navbar",
-    "VIEWER_CONTROLS" = "viewer-controls",
 }
 
 export interface ImageData {
