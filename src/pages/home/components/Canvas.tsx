@@ -165,36 +165,29 @@ export default function Canvas({
     useEffect(() => {
         console.log("firing effect 2");
         // I don't get how this is supposed to work, yet.
-        // function animate() {
-        //     const ctx = canvasRef.current?.getContext("2d", { alpha: false });
-        //     if (!ctx) {
-        //         return;
-        //     }
-        //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        //     ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
-        //     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        //     loadImages(ctx, state.images, sliderX.current);
-        //     requestAnimationFrame(animate);
-        // }
+        function animate() {
+            const ctx = canvasRef.current?.getContext("2d", { alpha: false });
+            if (!ctx) {
+                return;
+            }
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            renderImages(ctx, state.images, sliderX.current);
+            requestAnimationFrame(animate);
+        }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
-            // const timeout = ctx.canvas.width < 640 ? 1000 / 10 : 0;
-            // const timeout = 1000 / 60 
-            setTimeout(() => {
-                // this increases flicker
-                // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                ctx.fillStyle = isDark
-                    ? "rgb(43, 48, 53)"
-                    : "rgb(248, 249, 250)";
-                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                renderImages(ctx, state.images, sliderX.current);
-            }, 120);
-
-            // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
-            // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            // loadImages(ctx, state.images, sliderX.current);
-            // requestAnimationFrame(animate);
+            // setTimeout(() => {
+            //     // not sure clearing the canvas does much, when it's immediately refilled.
+            //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            //     ctx.fillStyle = isDark
+            //         ? "rgb(43, 48, 53)"
+            //         : "rgb(248, 249, 250)";
+            //     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            //     renderImages(ctx, state.images, sliderX.current);
+            // }, 120);
+            requestAnimationFrame(animate);
         } else {
             console.log("%cNo context in Canvas component!", "color: hotpink");
         }
