@@ -34,13 +34,8 @@ export default function Canvas({
     }
 
     useEffect(() => {
-        console.log("firing effect 1");
         const canvas = canvasRef.current;
         function handleSlide() {
-            /*
-            Image will slide if it's not the first or the last
-            Sliding on mobile is not implemented
-            */
             if (!canvas || !isSlideAllowed.current) {
                 if (!isSlideAllowed.current) {
                     console.log("%cSlide is disallowed", "color:yellow");
@@ -79,14 +74,12 @@ export default function Canvas({
         }
         if (canvas) {
             canvas.onmouseenter = (e) => {
-                // console.log("mouseenter", e.clientX, e.clientY);
                 setState({
                     ...state,
                     isMouseInCanvas: true,
                 });
             };
             canvas.onmouseleave = (e) => {
-                // console.log("mouseleave", e.clientX, e.clientY);
                 /*
                 Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
@@ -100,19 +93,13 @@ export default function Canvas({
             };
             canvas.onmousedown = (e) => {
                 if (e.target === canvas) {
-                    // console.log("mousedown", e.clientX, e.clientY);
                     setState({ ...state, isDragging: true });
                 } else {
                     console.log("Not in canvas");
                 }
             };
-            canvas.ontouchstart = (e) => {
-                // console.log("ontouchstart e", e);
-                if (e.target === canvas) {
-                    e.preventDefault();
-                }
-            };
             canvas.onmousemove = (e) => {
+                console.log("isDragging", state.isDragging);
                 if (state.isDragging) {
                     movementX.current += e.movementX;
                     if (slideCanSlide()) {
@@ -122,6 +109,7 @@ export default function Canvas({
                         isSlideAllowed.current = true;
                     }
                     sliderX.current += e.movementX;
+                    // this is used to trigger re-paint
                     setState({ ...state, movement: sliderX.current });
                 }
             };
@@ -163,8 +151,6 @@ export default function Canvas({
     }, [state.isDragging, state.isMouseInCanvas]);
 
     useEffect(() => {
-        console.log("firing effect 2");
-        // I don't get how this is supposed to work, yet.
         function animate() {
             const ctx = canvasRef.current?.getContext("2d", { alpha: false });
             if (!ctx) {
@@ -174,10 +160,17 @@ export default function Canvas({
             ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             renderImages(ctx, state.images, sliderX.current);
+            /*
+            Recursively calling this re-renders images continuously, even when not dragging.
+            Does this spark joy?
+            If not, look into only re-rendering on some delta.
+            But what delta?
+            */
             requestAnimationFrame(animate);
         }
         const ctx = canvasRef.current?.getContext("2d", { alpha: false });
         if (ctx) {
+            // This works, but requestAnimationFrame is recommended.
             // setTimeout(() => {
             //     // not sure clearing the canvas does much, when it's immediately refilled.
             //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -191,12 +184,6 @@ export default function Canvas({
         } else {
             console.log("%cNo context in Canvas component!", "color: hotpink");
         }
-        // return () => {
-        //     if (timeout) {
-        //         console.log("clearing timeout");
-        //         clearTimeout(timeout);
-        //     }
-        // };
     }, [isDark, state.images, state.movement, width]);
 
     return (
