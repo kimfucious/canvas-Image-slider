@@ -188,7 +188,7 @@ export default function Canvas({
                     : "rgb(248, 249, 250)";
                 ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                 renderImages(ctx, state.images, sliderX.current);
-            }, timeout);
+            }, 120);
 
             // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             // ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
