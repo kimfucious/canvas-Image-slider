@@ -11,8 +11,6 @@ import type { ImageData } from "../types";
 import { HomeState } from "../pages/home";
 
 let loadCount = 0;
-let loadTotal = 0;
-// let isImagesPreloaded = false;
 
 export function loadImages(state: HomeState, setState: (s: HomeState) => void) {
     try {
@@ -43,10 +41,7 @@ function getLoadedImages(
     state: HomeState,
     setState: (s: HomeState) => void
 ): HTMLImageElement[] {
-    // Initialize variables
     loadCount = 0;
-    loadTotal = imageData.length;
-    // isImagesPreloaded = false;
 
     var loadedImages: HTMLImageElement[] = [];
     imageData.forEach((image, idx) => {
@@ -56,14 +51,14 @@ function getLoadedImages(
             loadCount++;
             if (loadCount === imageData.length) {
                 console.log(
-                    `%cAll ${loadTotal} images have been loaded.`,
+                    `%cAll ${imageData.length} images have been loaded.`,
                     "color:green"
                 );
                 // console.log(
                 //     `%cSetting state to allImagesLoadedTrue!`,
                 //     "color:cyan"
                 // );
-                // setting state here fucks things up
+                // setting state here breaks things
                 // setState({ ...state, areImagesLoaded: true });
             }
         };
@@ -79,7 +74,7 @@ export function renderImages(
     images: HTMLImageElement[],
     sliderX: number
 ) {
-    console.log("%cRendering images...", "color: cyan");
+    // console.log("%cRendering images...", "color: cyan");
     images.forEach((image, idx) => renderImage(ctx, image, idx, sliderX));
 }
 
@@ -94,8 +89,9 @@ function renderImage(
     const scaleFactor = getImageScale(cAspectRatio, ctx, iAspectRatio, image);
     let height = image.height * scaleFactor;
     let width = image.width * scaleFactor;
-    /* This adds spacing around each image so they don't butt up against each other
-       It's not exactly like the demo, but I think it looks better :)
+    /* 
+    This adds spacing around each image so they don't butt up against each other
+    It's not exactly like the demo, but I think it looks better :)
     */
     if (image.height >= ctx.canvas.height || image.width >= ctx.canvas.height) {
         height -= ctx.canvas.width < 640 ? 28 : 48;
@@ -111,10 +107,6 @@ function renderImage(
         Math.round(width),
         Math.round(height)
     );
-    /* 
-    Not sure if I need this:
-    https://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-    */
 }
 
 function getImageScale(
