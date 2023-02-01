@@ -1,24 +1,18 @@
-import { loadImageData } from "../../actions/imageActions";
-import { useEffect, useMemo, useState } from "react";
+import { initImages } from "../../actions/imageActions";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
-import type { SliderImage } from "../../types";
+import ProgressIndicator from "./components/ProgressIndicator";
 
 export interface HomeState {
-    currentImage?: SliderImage;
-    currentImageIndex: number;
-    images: SliderImage[];
+    images: HTMLImageElement[];
     isDragging: boolean;
-    isMouseInCanvas: boolean;
     movement: number;
 }
 
 const initialState: HomeState = {
-    currentImage: undefined,
-    currentImageIndex: 0,
     images: [],
     isDragging: false,
-    isMouseInCanvas: false,
     movement: 0,
 };
 
@@ -26,19 +20,12 @@ interface Props {
     navbarOffset: number;
 }
 export default function Home({ navbarOffset }: Props) {
+    const currentIndex = useRef(0);
     const [, viewportWidth] = useWindowSize();
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
-        const resp = loadImageData();
-        if (resp.length) {
-            setState({
-                ...state,
-                images: resp,
-                currentImage: resp[0],
-                currentImageIndex: 0,
-            });
-        }
+        initImages(state, setState);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -52,25 +39,26 @@ export default function Home({ navbarOffset }: Props) {
             canvasHeight = 480;
             canvasWidth = 640;
         }
-        console.log("new canvas height", canvasHeight);
-        console.log("new canvas width", canvasWidth);
         return { canvasHeight, canvasWidth };
     }, [viewportWidth]);
 
-    return state.currentImage ? (
+    return state.images.length ? (
         <div
             className="container py-5 d-flex flex-column align-items-center justify-content-center"
             style={{ marginTop: navbarOffset }}
         >
             <Canvas
+                currentIndex={currentIndex}
                 height={canvasHeight}
                 width={canvasWidth}
                 state={state}
                 setState={setState}
             />
-            {/* <div className="mt-3">
-                put indicator here
-            </div> */}
+            <ProgressIndicator
+                canvasWidth={canvasWidth}
+                currentIndex={currentIndex}
+                state={state}
+            />
         </div>
     ) : (
         <div

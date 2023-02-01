@@ -5,10 +5,9 @@ export interface ElHeight {
 
 export enum ElName {
     "NAVBAR" = "navbar",
-    "VIEWER_CONTROLS" = "viewer-controls",
 }
 
-export interface SliderImage {
+export interface ImageData {
     path: string;
     altText: string;
 }

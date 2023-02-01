@@ -1,95 +1,92 @@
+import { useEffect, useRef } from "react";
 import { ColorThemeMode } from "../../../types/colorTheme";
 import { HomeState } from "..";
-import { loadImages } from "../../../actions/imageActions";
+import { renderImages } from "../../../actions/imageActions";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { useEffect, useRef } from "react";
 
 interface Props {
+    currentIndex: React.MutableRefObject<number>;
     height: number;
     state: HomeState;
     setState: (s: HomeState) => void;
     width: number;
 }
-export default function Canvas({ height, state, setState, width }: Props) {
+export default function Canvas({
+    currentIndex,
+    height,
+    state,
+    setState,
+    width,
+}: Props) {
     const { theme } = useAppSelector((state) => state.colorTheme);
     const isDark = theme === ColorThemeMode.DARK;
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const frame = useRef(0);
+    const isGrabbing = useRef(false);
     const isSlideAllowed = useRef(false);
     const movementX = useRef(0);
     const sliderX = useRef(0);
 
+    function slideCanSlide() {
+        return (
+            (movementX.current > 0 && currentIndex.current === 0) ||
+            (movementX.current < 0 &&
+                currentIndex.current === state.images.length - 1)
+        );
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
         function handleSlide() {
-            /*
-            Image will slide if it's not the first or the last
-            Sliding on mobile is not implemented
-            */
             if (!canvas || !isSlideAllowed.current) {
                 if (!isSlideAllowed.current) {
-                    console.log("Slide is disallowed");
+                    console.log("%cSlide is disallowed", "color:yellow");
                 }
                 setState({ ...state, isDragging: false });
                 movementX.current = 0;
                 return;
             }
-            const movementAmount = Math.abs(movementX.current);
-            const diff = canvas.width - movementAmount;
-            let currentIndex = state.currentImageIndex;
-            if (movementAmount > canvas.width / 12 && isSlideAllowed.current) {
-                console.log("%cGonna finish slide", "color:lime");
+            const absMovementAmount = Math.abs(movementX.current);
+            const diff = canvas.width - absMovementAmount;
+            if (isSlideAllowed.current) {
                 if (movementX.current < 0) {
                     sliderX.current -= diff;
-                    currentIndex += 1;
+                    currentIndex.current += 1;
                 } else if (movementX.current > 0) {
                     sliderX.current += diff;
-                    currentIndex -= 1;
+                    currentIndex.current -= 1;
                 }
                 console.log(
-                    `%cSetting current index to: ${currentIndex}`,
+                    `%cMoved to slide ${currentIndex.current}`,
                     "color:lime"
                 );
-                setState({
-                    ...state,
-                    isDragging: false,
-                    currentImageIndex: currentIndex,
-                });
             } else {
                 console.log("%cGonna undo slide", "color:yellow");
-                sliderX.current = state.currentImageIndex * canvas.width * -1;
+                sliderX.current = currentIndex.current * canvas.width * -1;
                 console.log(
                     `%cReverted SliderX: ${sliderX.current}`,
                     "color:yellow"
                 );
-                setState({
-                    ...state,
-                    isDragging: false,
-                });
             }
+            setState({
+                ...state,
+                isDragging: false,
+            });
             movementX.current = 0;
         }
         if (canvas) {
-            canvas.onmouseenter = (e) => {
-                console.log("mouseenter", e.clientX, e.clientY);
-                setState({
-                    ...state,
-                    isMouseInCanvas: true,
-                });
-            };
             canvas.onmouseleave = (e) => {
-                console.log("mouseleave", e.clientX, e.clientY);
                 /*
-                Probably better UX to allow dragging to continue after leaving the canvas.
+                Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
-                setState({
-                    ...state,
-                    isMouseInCanvas: true,
-                });
-                handleSlide();
+                isGrabbing.current = false;
+                if (movementX.current) {
+                    handleSlide();
+                }
             };
             canvas.onmousedown = (e) => {
-                if (state.isMouseInCanvas) {
-                    console.log("mousedown", e.clientX, e.clientY);
+                if (e.target === canvas) {
+                    isGrabbing.current = true;
                     setState({ ...state, isDragging: true });
                 } else {
                     console.log("Not in canvas");
@@ -98,40 +95,89 @@ export default function Canvas({ height, state, setState, width }: Props) {
             canvas.onmousemove = (e) => {
                 if (state.isDragging) {
                     movementX.current += e.movementX;
-                    if (
-                        (movementX.current > 0 &&
-                            state.currentImageIndex === 0) ||
-                        (movementX.current < 0 &&
-                            state.currentImageIndex === state.images.length - 1)
-                    ) {
-                        console.log("%cDisallowing slide", "color:yellow");
+                    if (slideCanSlide()) {
                         isSlideAllowed.current = false;
                         return;
                     } else {
-                        console.log("%cAllowing slide", "color: lime");
                         isSlideAllowed.current = true;
                     }
                     sliderX.current += e.movementX;
+                    // this is used to trigger re-paint (refs don't do that)
                     setState({ ...state, movement: sliderX.current });
                 }
             };
+            canvas.ontouchstart = (e) => {
+                isGrabbing.current = true;
+            };
+            var previousTouchX = 0;
+            canvas.ontouchmove = (e) => {
+                if (e.target === canvas) {
+                    e.preventDefault();
+                }
+                const touch = e.targetTouches[0];
+                const deltaX = previousTouchX
+                    ? touch.clientX - previousTouchX
+                    : 0;
+                movementX.current += deltaX;
+                if (slideCanSlide()) {
+                    isSlideAllowed.current = false;
+                    return;
+                } else {
+                    isSlideAllowed.current = true;
+                }
+                sliderX.current += deltaX;
+                previousTouchX = touch.clientX;
+                setState({ ...state, movement: sliderX.current });
+            };
             canvas.onmouseup = (e) => {
-                console.log("mouseup", e.clientX, e.clientY);
+                isGrabbing.current = false;
+                handleSlide();
+            };
+            canvas.ontouchend = (e) => {
+                isGrabbing.current = false;
+                previousTouchX = 0;
+                if (movementX.current === 0) return;
+                handleSlide();
+            };
+            canvas.ontouchcancel = (e) => {
+                isGrabbing.current = false;
+                previousTouchX = 0;
+                if (movementX.current === 0) return;
                 handleSlide();
             };
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.isDragging, state.isMouseInCanvas]);
+    }, [state.isDragging]);
 
     useEffect(() => {
-        const ctx = canvasRef.current?.getContext("2d");
-        if (ctx) {
+        function renderCanvas() {
+            const ctx = canvasRef.current?.getContext("2d", { alpha: false });
+            if (!ctx) {
+                console.log("%cNo context!", "color:yellow");
+                return;
+            }
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            loadImages(ctx, state.images, sliderX.current);
-        } else {
-            console.log("No context in Canvas component");
+            renderImages(ctx, state.images, sliderX.current);
         }
+        function animate() {
+            renderCanvas();
+            console.log(
+                "%cRendering Canvas. Animation frame:",
+                "color:cyan",
+                frame.current
+            );
+            if (!isGrabbing.current) {
+                console.log("cancelling animation at frame", frame.current);
+                cancelAnimationFrame(frame.current);
+                renderCanvas();
+                // frame.current = 0
+            } else {
+                frame.current = requestAnimationFrame(animate);
+            }
+        }
+        frame.current = requestAnimationFrame(animate);
     }, [isDark, state.images, state.movement, width]);
 
     return (
@@ -139,7 +185,9 @@ export default function Canvas({ height, state, setState, width }: Props) {
             ref={canvasRef}
             height={height}
             width={width}
-            style={{ cursor: "grab" }}
+            style={{
+                cursor: isGrabbing.current ? "grabbing" : "grab",
+            }}
         />
     );
 }

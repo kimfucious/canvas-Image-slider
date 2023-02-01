@@ -1,3 +1,4 @@
+import { HomeState } from "../pages/home";
 import image_1 from "../assets/images/bm_3.webp";
 import image_2 from "../assets/images/pt.webp";
 import image_3 from "../assets/images/bw.webp";
@@ -7,11 +8,13 @@ import image_6 from "../assets/images/sly_and_robbie.webp";
 import image_7 from "../assets/images/pt_2.webp";
 import image_8 from "../assets/images/bm_mj_pt.webp";
 import image_9 from "../assets/images/sd.webp";
-import type { SliderImage } from "../types";
+import type { ImageData } from "../types";
 
-export function loadImageData() {
+let loadCount = 0;
+
+export function initImages(state: HomeState, setState: (s: HomeState) => void) {
     try {
-        const images: SliderImage[] = [
+        const imageData: ImageData[] = [
             { path: image_1, altText: "Bob Marley" },
             { path: image_2, altText: "Peter Tosh" },
             { path: image_3, altText: "Bunny Wailer" },
@@ -25,66 +28,71 @@ export function loadImageData() {
             },
             { path: image_9, altText: "Snoop Diggity" },
         ];
-        return images;
+        loadImages(imageData, state, setState);
     } catch (error) {
         throw error;
     }
 }
 
-function loadImage(
-    ctx: CanvasRenderingContext2D,
-    idx: number,
-    images: SliderImage[],
-    sliderX: number
-) {
-    if (idx >= 0 && idx < images.length) {
-        const image = new Image();
-        image.src = images[idx].path;
-        image.onload = () => {
-            console.log("SliderX is:", sliderX);
-            const offset = idx * ctx.canvas.width;
-            console.log("offset is:", offset);
-            const description = images[idx].altText;
-            renderImage(ctx, description, image, offset, sliderX);
+function loadImages(
+    imageData: ImageData[],
+    state: HomeState,
+    setState: (s: HomeState) => void
+): void {
+    loadCount = 0;
+
+    const loadedImages: HTMLImageElement[] = [];
+    imageData.forEach((image, idx) => {
+        const imgEl = new Image();
+        imgEl.onload = function () {
+            console.log("%cImage loaded:", "color:lime", image.altText);
+            loadCount++;
+            if (loadCount === imageData.length) {
+                console.log(
+                    `%cAll ${imageData.length} images have been loaded.`,
+                    "color:green"
+                );
+                /* 
+                not entirely sure this is the best time to do this, but it works
+                better than all prior attempts.
+                */
+                setState({ ...state, images: loadedImages });
+            }
         };
-    }
+        imgEl.src = imageData[idx].path;
+        loadedImages[idx] = imgEl;
+    });
 }
 
-export function loadImages(
+export function renderImages(
     ctx: CanvasRenderingContext2D,
-    images: SliderImage[],
+    images: HTMLImageElement[],
     sliderX: number
 ) {
-    console.log(`Loading ${images.length} images...`);
-    images.forEach((_, idx) => loadImage(ctx, idx, images, sliderX));
+    images.forEach((image, idx) => renderImage(ctx, image, idx, sliderX));
 }
 
 function renderImage(
     ctx: CanvasRenderingContext2D,
-    description: string,
     image: HTMLImageElement,
-    offset: number,
+    idx: number,
     sliderX: number
 ) {
-    console.log(`Rendering ${description}...`);
     const cAspectRatio = ctx.canvas.width / ctx.canvas.height;
     const iAspectRatio = image.width / image.height;
-    const scaleFactor = getImageScale(
-        cAspectRatio,
-        ctx,
-        description,
-        iAspectRatio,
-        image
-    );
+    const scaleFactor = getImageScale(cAspectRatio, ctx, iAspectRatio, image);
     let height = image.height * scaleFactor;
     let width = image.width * scaleFactor;
-    if (image.height >= ctx.canvas.height || image.width >= ctx.canvas.height) {
-        height -= 50;
-        width -= 50;
+    /* 
+    This adds spacing around each image so they don't butt up against each other
+    It's not exactly like the demo, but I think it looks better :)
+    */
+    if (image.height >= ctx.canvas.height || image.height >= ctx.canvas.height) {
+        height -= ctx.canvas.width < 640 ? 28 : 48;
+        width -= ctx.canvas.width < 640 ? 28 : 48;
     }
-    const x =
-        // offset + sliderX + (ctx.canvas.width - image.width * scaleFactor) / 2;
-        offset + sliderX + (ctx.canvas.width - width) / 2;
+    const offset = idx * ctx.canvas.width;
+    const x = offset + sliderX + (ctx.canvas.width - width) / 2;
     const y = (ctx.canvas.height - height) / 2;
     ctx.drawImage(
         image,
@@ -93,16 +101,11 @@ function renderImage(
         Math.round(width),
         Math.round(height)
     );
-    /* 
-    Not sure if I need this:
-    https://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-    */
 }
 
 function getImageScale(
     cAspectRatio: number,
     ctx: CanvasRenderingContext2D,
-    description: string,
     iAspectRatio: number,
     image: HTMLImageElement
 ) {
