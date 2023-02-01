@@ -53,6 +53,7 @@ export default function Home({ navbarOffset }: Props) {
     }, [viewportWidth]);
 
     // I'm not actually waiting for images to load, but I probably should be.
+
     return state.images.length ? (
         <div
             className="container py-5 d-flex flex-column align-items-center justify-content-center"
