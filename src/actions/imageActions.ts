@@ -87,7 +87,7 @@ function renderImage(
     This adds spacing around each image so they don't butt up against each other
     It's not exactly like the demo, but I think it looks better :)
     */
-    if (image.height >= ctx.canvas.height || image.width >= ctx.canvas.height) {
+    if (image.height >= ctx.canvas.height || image.height >= ctx.canvas.height) {
         height -= ctx.canvas.width < 640 ? 28 : 48;
         width -= ctx.canvas.width < 640 ? 28 : 48;
     }
