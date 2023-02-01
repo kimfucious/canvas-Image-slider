@@ -5,18 +5,14 @@ import Canvas from "./components/";
 import ProgressIndicator from "./components/ProgressIndicator";
 
 export interface HomeState {
-    areImagesLoaded: boolean;
     images: HTMLImageElement[];
     isDragging: boolean;
-    isMouseInCanvas: boolean;
     movement: number;
 }
 
 const initialState: HomeState = {
-    areImagesLoaded: false,
     images: [],
     isDragging: false,
-    isMouseInCanvas: false,
     movement: 0,
 };
 
