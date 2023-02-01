@@ -1,4 +1,4 @@
-import { loadImages } from "../../actions/imageActions";
+import { initImages } from "../../actions/imageActions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
@@ -29,13 +29,7 @@ export default function Home({ navbarOffset }: Props) {
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
-        const resp = loadImages(state, setState);
-        if (resp.length) {
-            setState({
-                ...state,
-                images: resp,
-            });
-        }
+        initImages(state, setState);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -51,8 +45,6 @@ export default function Home({ navbarOffset }: Props) {
         }
         return { canvasHeight, canvasWidth };
     }, [viewportWidth]);
-
-    // I'm not actually waiting for images to load, but I probably should be.
 
     return state.images.length ? (
         <div

@@ -189,13 +189,7 @@ export default function Canvas({
                 frame.current = requestAnimationFrame(animate);
             }
         }
-        renderCanvas();
-        /*
-        This is a hack to ensure the first image is displayed in the canvas
-        */
-        setTimeout(() => {
-            frame.current = requestAnimationFrame(animate);
-        }, 240);
+        frame.current = requestAnimationFrame(animate);
     }, [isDark, state.images, state.movement, width]);
 
     return (

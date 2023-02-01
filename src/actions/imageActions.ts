@@ -12,7 +12,7 @@ import { HomeState } from "../pages/home";
 
 let loadCount = 0;
 
-export function loadImages(state: HomeState, setState: (s: HomeState) => void) {
+export function initImages(state: HomeState, setState: (s: HomeState) => void) {
     try {
         const imageData: ImageData[] = [
             { path: image_1, altText: "Bob Marley" },
@@ -28,19 +28,17 @@ export function loadImages(state: HomeState, setState: (s: HomeState) => void) {
             },
             { path: image_9, altText: "Snoop Diggity" },
         ];
-
-        const images = getLoadedImages(imageData, state, setState);
-        return images;
+        loadImages(imageData, state, setState);
     } catch (error) {
         throw error;
     }
 }
 
-function getLoadedImages(
+function loadImages(
     imageData: ImageData[],
     state: HomeState,
     setState: (s: HomeState) => void
-): HTMLImageElement[] {
+): void {
     loadCount = 0;
 
     var loadedImages: HTMLImageElement[] = [];
@@ -54,19 +52,16 @@ function getLoadedImages(
                     `%cAll ${imageData.length} images have been loaded.`,
                     "color:green"
                 );
-                // console.log(
-                //     `%cSetting state to allImagesLoadedTrue!`,
-                //     "color:cyan"
-                // );
-                // setting state here breaks things
-                // setState({ ...state, areImagesLoaded: true });
+                /* 
+                not entirely sure this is the best time to do this, but it works
+                better than all prior attempts.
+                */
+                setState({ ...state, images: loadedImages });
             }
         };
         imgEl.src = imageData[idx].path;
         loadedImages[idx] = imgEl;
     });
-
-    return loadedImages;
 }
 
 export function renderImages(
@@ -74,7 +69,6 @@ export function renderImages(
     images: HTMLImageElement[],
     sliderX: number
 ) {
-    // console.log("%cRendering images...", "color: cyan");
     images.forEach((image, idx) => renderImage(ctx, image, idx, sliderX));
 }
 
