@@ -75,23 +75,11 @@ export default function Canvas({
             movementX.current = 0;
         }
         if (canvas) {
-            // isMouseInCanvas not needed anymore... remove
-            // canvas.onmouseenter = (e) => {
-            //     setState({
-            //         ...state,
-            //         isMouseInCanvas: true,
-            //     });
-            // };
             canvas.onmouseleave = (e) => {
                 /*
                 Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
                 isGrabbing.current = false;
-                // isMouseInCanvas not needed anymore... remove
-                // setState({
-                //     ...state,
-                //     isMouseInCanvas: false,
-                // });
                 if (movementX.current) {
                     handleSlide();
                 }
