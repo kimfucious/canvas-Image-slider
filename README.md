@@ -9,9 +9,6 @@ This is an example of how to create an HTML 5 Canvas API based image slider
 3. execute `npm i`
 4. execute `npm start`
 
-## To Do
-1. Tame recursive `animate()` function so that it only runs as needed. 
-
 ## References
 
 -   [Optimizing Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas)
