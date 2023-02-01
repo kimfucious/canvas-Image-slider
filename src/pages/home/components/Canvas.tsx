@@ -21,6 +21,7 @@ export default function Canvas({
     const { theme } = useAppSelector((state) => state.colorTheme);
     const isDark = theme === ColorThemeMode.DARK;
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const frame = useRef(0);
     const isGrabbing = useRef(false);
     const isSlideAllowed = useRef(false);
     const movementX = useRef(0);
@@ -74,21 +75,23 @@ export default function Canvas({
             movementX.current = 0;
         }
         if (canvas) {
-            canvas.onmouseenter = (e) => {
-                setState({
-                    ...state,
-                    isMouseInCanvas: true,
-                });
-            };
+            // isMouseInCanvas not needed anymore... remove
+            // canvas.onmouseenter = (e) => {
+            //     setState({
+            //         ...state,
+            //         isMouseInCanvas: true,
+            //     });
+            // };
             canvas.onmouseleave = (e) => {
                 /*
                 Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
                 isGrabbing.current = false;
-                setState({
-                    ...state,
-                    isMouseInCanvas: false,
-                });
+                // isMouseInCanvas not needed anymore... remove
+                // setState({
+                //     ...state,
+                //     isMouseInCanvas: false,
+                // });
                 if (movementX.current) {
                     handleSlide();
                 }
@@ -156,44 +159,43 @@ export default function Canvas({
             };
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.isDragging, state.isMouseInCanvas]);
-    // }, [state.isDragging]);
+    }, [state.isDragging]);
 
     useEffect(() => {
-        function animate() {
+        function renderCanvas() {
             const ctx = canvasRef.current?.getContext("2d", { alpha: false });
             if (!ctx) {
+                console.log("%cNo context!", "color:yellow");
                 return;
             }
-            // not sure if clearRect sparks joy
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             renderImages(ctx, state.images, sliderX.current);
-            /*
-            Recursively calling causes continuous re-renders while the tab is focused, even when not dragging.
-            Does this spark joy?
-            If not, look into only re-rendering on some delta.
-            But what delta?
-            */
-            requestAnimationFrame(animate);
         }
-        const ctx = canvasRef.current?.getContext("2d", { alpha: false });
-        if (ctx) {
-            // This works, but requestAnimationFrame is recommended.
-            // setTimeout(() => {
-            //     // not sure clearing the canvas does much, when it's immediately refilled.
-            //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            //     ctx.fillStyle = isDark
-            //         ? "rgb(43, 48, 53)"
-            //         : "rgb(248, 249, 250)";
-            //     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            //     renderImages(ctx, state.images, sliderX.current);
-            // }, 120);
-            requestAnimationFrame(animate);
-        } else {
-            console.log("%cNo context in Canvas component!", "color: hotpink");
+        function animate() {
+            renderCanvas();
+            console.log(
+                "%cRendering Canvas. Animation frame:",
+                "color:cyan",
+                frame.current
+            );
+            if (!isGrabbing.current) {
+                console.log("cancelling animation at frame", frame.current);
+                cancelAnimationFrame(frame.current);
+                renderCanvas();
+                // frame.current = 0
+            } else {
+                frame.current = requestAnimationFrame(animate);
+            }
         }
+        renderCanvas();
+        /*
+        This is a hack to ensure the first image is displayed in the canvas
+        */
+        setTimeout(() => {
+            frame.current = requestAnimationFrame(animate);
+        }, 120);
     }, [isDark, state.images, state.movement, width]);
 
     return (
