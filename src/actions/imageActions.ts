@@ -41,7 +41,7 @@ function loadImages(
 ): void {
     loadCount = 0;
 
-    var loadedImages: HTMLImageElement[] = [];
+    const loadedImages: HTMLImageElement[] = [];
     imageData.forEach((image, idx) => {
         const imgEl = new Image();
         imgEl.onload = function () {
