@@ -21,6 +21,7 @@ export default function Canvas({
     const { theme } = useAppSelector((state) => state.colorTheme);
     const isDark = theme === ColorThemeMode.DARK;
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const isGrabbing = useRef(false);
     const isSlideAllowed = useRef(false);
     const movementX = useRef(0);
     const sliderX = useRef(0);
@@ -83,6 +84,7 @@ export default function Canvas({
                 /*
                 Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
+                isGrabbing.current = false;
                 setState({
                     ...state,
                     isMouseInCanvas: false,
@@ -93,13 +95,13 @@ export default function Canvas({
             };
             canvas.onmousedown = (e) => {
                 if (e.target === canvas) {
+                    isGrabbing.current = true;
                     setState({ ...state, isDragging: true });
                 } else {
                     console.log("Not in canvas");
                 }
             };
             canvas.onmousemove = (e) => {
-                console.log("isDragging", state.isDragging);
                 if (state.isDragging) {
                     movementX.current += e.movementX;
                     if (slideCanSlide()) {
@@ -109,9 +111,12 @@ export default function Canvas({
                         isSlideAllowed.current = true;
                     }
                     sliderX.current += e.movementX;
-                    // this is used to trigger re-paint
+                    // this is used to trigger re-paint (refs don't do that)
                     setState({ ...state, movement: sliderX.current });
                 }
+            };
+            canvas.ontouchstart = (e) => {
+                isGrabbing.current = true;
             };
             var previousTouchX = 0;
             canvas.ontouchmove = (e) => {
@@ -134,14 +139,17 @@ export default function Canvas({
                 setState({ ...state, movement: sliderX.current });
             };
             canvas.onmouseup = (e) => {
+                isGrabbing.current = false;
                 handleSlide();
             };
             canvas.ontouchend = (e) => {
+                isGrabbing.current = false;
                 previousTouchX = 0;
                 if (movementX.current === 0) return;
                 handleSlide();
             };
             canvas.ontouchcancel = (e) => {
+                isGrabbing.current = false;
                 previousTouchX = 0;
                 if (movementX.current === 0) return;
                 handleSlide();
@@ -149,6 +157,7 @@ export default function Canvas({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isDragging, state.isMouseInCanvas]);
+    // }, [state.isDragging]);
 
     useEffect(() => {
         function animate() {
@@ -156,12 +165,13 @@ export default function Canvas({
             if (!ctx) {
                 return;
             }
+            // not sure if clearRect sparks joy
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             ctx.fillStyle = isDark ? "rgb(43, 48, 53)" : "rgb(248, 249, 250)";
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             renderImages(ctx, state.images, sliderX.current);
             /*
-            Recursively calling this re-renders images continuously, even when not dragging.
+            Recursively calling causes continuous re-renders while the tab is focused, even when not dragging.
             Does this spark joy?
             If not, look into only re-rendering on some delta.
             But what delta?
@@ -191,7 +201,9 @@ export default function Canvas({
             ref={canvasRef}
             height={height}
             width={width}
-            style={{ cursor: "grab" }}
+            style={{
+                cursor: isGrabbing.current ? "grabbing" : "grab",
+            }}
         />
     );
 }
