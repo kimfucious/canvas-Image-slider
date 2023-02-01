@@ -195,7 +195,7 @@ export default function Canvas({
         */
         setTimeout(() => {
             frame.current = requestAnimationFrame(animate);
-        }, 120);
+        }, 240);
     }, [isDark, state.images, state.movement, width]);
 
     return (
