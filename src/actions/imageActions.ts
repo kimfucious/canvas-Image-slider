@@ -1,3 +1,4 @@
+import { HomeState } from "../pages/home";
 import image_1 from "../assets/images/bm_3.webp";
 import image_2 from "../assets/images/pt.webp";
 import image_3 from "../assets/images/bw.webp";
@@ -8,7 +9,6 @@ import image_7 from "../assets/images/pt_2.webp";
 import image_8 from "../assets/images/bm_mj_pt.webp";
 import image_9 from "../assets/images/sd.webp";
 import type { ImageData } from "../types";
-import { HomeState } from "../pages/home";
 
 let loadCount = 0;
 
