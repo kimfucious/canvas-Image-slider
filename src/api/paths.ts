@@ -1,0 +1,1 @@
+export const PICTURES_ENDPOINT = "https://picsum.photos"

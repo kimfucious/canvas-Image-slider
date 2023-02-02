@@ -1,18 +1,26 @@
-import { initImages } from "../../actions/imageActions";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ImageLoader } from "../../api";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
-import ProgressIndicator from "./components/ProgressIndicator";
+import ProgressIndicator from "./components/ProgressIndicator/";
 
 export interface HomeState {
+    currentIndex: number;
+    currentScene: number;
     images: HTMLImageElement[];
-    isDragging: boolean;
+    isGrabbing: boolean;
+    isInCanvas: boolean;
+    isLoading: boolean;
     movement: number;
 }
 
 const initialState: HomeState = {
+    currentIndex: 0,
+    currentScene: 1,
     images: [],
-    isDragging: false,
+    isGrabbing: false,
+    isInCanvas: false,
+    isLoading: false,
     movement: 0,
 };
 
@@ -21,13 +29,37 @@ interface Props {
 }
 export default function Home({ navbarOffset }: Props) {
     const currentIndex = useRef(0);
+    const isLoading = useRef(false);
     const [, viewportWidth] = useWindowSize();
     const [state, setState] = useState(initialState);
+    const SCENE_SIZE = 5;
+    const START_IMAGE = 10;
 
     useEffect(() => {
-        initImages(state, setState);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (!state.images.length && !state.currentIndex) {
+            ImageLoader.initImages(
+                isLoading,
+                SCENE_SIZE,
+                START_IMAGE,
+                state,
+                setState
+            );
+        } else {
+            const mid = Math.floor(state.images.length / 2);
+            // console.log("MID", mid);
+            // console.log("current Index", state.currentIndex);
+            if (state.currentIndex >= mid) {
+            // if (state.currentIndex >= state.images.length - 1) {
+                ImageLoader.loadMoreImages(
+                    isLoading,
+                    SCENE_SIZE,
+                    START_IMAGE,
+                    state,
+                    setState
+                );
+            }
+        }
+    }, [state]);
 
     const { canvasHeight, canvasWidth } = useMemo(() => {
         let canvasHeight = 240;
@@ -55,9 +87,9 @@ export default function Home({ navbarOffset }: Props) {
                 setState={setState}
             />
             <ProgressIndicator
-                canvasWidth={canvasWidth}
                 currentIndex={currentIndex}
-                state={state}
+                imagesCount={state.images.length}
+                isLoading={isLoading.current}
             />
         </div>
     ) : (
