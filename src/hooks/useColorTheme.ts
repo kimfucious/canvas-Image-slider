@@ -26,7 +26,11 @@ export default function useColorTheme(): Payload {
         const el = document.querySelector("[data-bs-theme]");
         const updatedTheme = theme === "dark" ? "light" : "dark";
         el?.setAttribute("data-bs-theme", updatedTheme);
-        console.log("Changing theme to:", updatedTheme);
+        console.log(
+            "%cChanging theme to:",
+            "color:cyan",
+            updatedTheme === "dark" ? "🌝" : "🌞"
+        );
         dispatch({ type: ActionType.SET_COLOR_THEME, payload: updatedTheme });
     }
     return { theme, toggleTheme };
