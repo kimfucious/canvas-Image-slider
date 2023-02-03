@@ -144,7 +144,6 @@ export default function Canvas({
                 handleSlide();
             };
         }
-        // }, [state.isGrabbing]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state]);
 
