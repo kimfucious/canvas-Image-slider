@@ -9,7 +9,6 @@ import ProgressIndicator from "./components/ProgressIndicator/";
 
 export interface HomeState {
     currentIndex: number;
-    currentScene: number;
     images: HTMLImageElement[];
     isGrabbing: boolean;
     isInCanvas: boolean;
@@ -19,7 +18,6 @@ export interface HomeState {
 
 const initialState: HomeState = {
     currentIndex: 0,
-    currentScene: 1,
     images: [],
     isGrabbing: false,
     isInCanvas: false,
