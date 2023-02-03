@@ -13,6 +13,7 @@ This is an example of how to create an HTML 5 Canvas API based image slider
 
 -   [Lorem Picsum](https://picsum.photos/) is used for images. The last image is 1084, but there are gaps.
 -   Logic has been put in place to download valid IDs prior to starting the slide show.
+-   When running in dev, you will notice some weird behavior (e.g. images changing randomly) due to the fact that React, running in strict mode, does things twice. This does not happen in prod.
 
 ## To Do
 
