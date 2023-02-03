@@ -48,11 +48,9 @@ export default function Canvas({
         }
         if (canvas) {
             canvas.onmouseenter = (e) => {
-                console.log("onmouseenter!");
                 setState({ ...state, isInCanvas: true });
             };
             canvas.onmouseleave = (e) => {
-                console.log("onmouseleave!");
                 /*
                 Possibly better UX to allow dragging to continue after leaving the canvas.
                 */
@@ -68,10 +66,9 @@ export default function Canvas({
                 }
             };
             canvas.onmousedown = (e) => {
-                console.log("onmousedown!");
                 if (e.target === canvas) {
                     isGrabbing.current = true;
-                    console.log("I'm grabbing!");
+                    // console.log("I'm grabbing!");
                     setState({ ...state, isGrabbing: true });
                 } else {
                     console.log("Not in canvas");
@@ -98,7 +95,7 @@ export default function Canvas({
             canvas.ontouchstart = (e) => {
                 if (e.target === canvas) {
                     isGrabbing.current = true;
-                    console.log("I'm grabbing!");
+                    // console.log("I'm grabbing!");
                     setState({ ...state, isGrabbing: true });
                 } else {
                     console.log("Not in canvas");
