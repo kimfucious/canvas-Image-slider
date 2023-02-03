@@ -11,8 +11,8 @@ This is an example of how to create an HTML 5 Canvas API based image slider
 
 ## Notes
 
--   Infinite Slider uses [Lorem Picsum](https://picsum.photos/) for images. There is a total of 1084 images, so it's not really infinite.
--   Some images are missing (e.g. 285, 286 & 561), so logic has been put in place to download valid IDs prior to starting the slide show.
+-   [Lorem Picsum](https://picsum.photos/) is used for images. The last image is 1084, but there are gaps. 
+-   Logic has been put in place to download valid IDs prior to starting the slide show.
 
 ## To Do
 
