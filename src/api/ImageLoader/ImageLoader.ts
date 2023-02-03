@@ -21,7 +21,7 @@ export default class ImageLoader {
             isLoading: true,
             val: 0,
         });
-        console.log("%c🐕 Fetching IDs from image api", "color:cyan");
+        console.log("%c🐕 Fetching valid image IDs from Lorem Picsum", "color:cyan");
         while (this._imageIds.length < 1000) {
             const { data } = await axios(
                 `https://picsum.photos/v2/list?page=${page}&limit=100`
@@ -163,7 +163,7 @@ export default class ImageLoader {
             image.src = src;
             loadedImages[idx] = image;
         });
-        console.log("Updating final loading state");
+        // console.log("Updating final loading state");
         // this needs to find the right spot!
         setLoadingImages({ isLoading: false, val: 0 });
     }
