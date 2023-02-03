@@ -17,6 +17,8 @@ This is an example of how to create an HTML 5 Canvas API based image slider
 ## To Do
 
 -   At present, images are added to the DOM and the canvas, but they are not removed. This could get ugly after a certain point. Figure out how to remove the right amount at the right time to toward being performant.
+-  This does not display nice on a mobile phone in landscape.
+-  This does not adapt well when the orientation changes. 
 
 ## References
 
