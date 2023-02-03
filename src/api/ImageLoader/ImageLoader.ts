@@ -140,11 +140,11 @@ export default class ImageLoader {
                     isInitialLoad
                         ? console.log(
                               `%c🖼️ All ${sources.length} initial images have been loaded.`,
-                              "color:green"
+                              "color:lime"
                           )
                         : console.log(
                               `%c🖼️ ${sources.length} more images have been loaded.`,
-                              "color:green"
+                              "color:lime"
                           );
                     /* 
                     not entirely sure this is the best time to do this, but it works
