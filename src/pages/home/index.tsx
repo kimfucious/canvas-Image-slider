@@ -3,6 +3,7 @@ import { ImageLoader } from "../../api";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
 import ProgressIndicator from "./components/ProgressIndicator/";
+import config from "../../config/config.json";
 
 export interface HomeState {
     currentIndex: number;
@@ -32,33 +33,26 @@ export default function Home({ navbarOffset }: Props) {
     const isLoading = useRef(false);
     const [, viewportWidth] = useWindowSize();
     const [state, setState] = useState(initialState);
-    const SCENE_SIZE = 5;
-    const START_IMAGE = 10;
+    const { SCENE_SIZE } = config;
 
     useEffect(() => {
+        async function init() {
+            ImageLoader.initImages(isLoading, SCENE_SIZE, state, setState);
+        }
         if (!state.images.length && !state.currentIndex) {
-            ImageLoader.initImages(
-                isLoading,
-                SCENE_SIZE,
-                START_IMAGE,
-                state,
-                setState
-            );
+            init();
         } else {
             const mid = Math.floor(state.images.length / 2);
-            // console.log("MID", mid);
-            // console.log("current Index", state.currentIndex);
             if (state.currentIndex >= mid) {
-            // if (state.currentIndex >= state.images.length - 1) {
                 ImageLoader.loadMoreImages(
                     isLoading,
                     SCENE_SIZE,
-                    START_IMAGE,
                     state,
                     setState
                 );
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state]);
 
     const { canvasHeight, canvasWidth } = useMemo(() => {
@@ -94,12 +88,13 @@ export default function Home({ navbarOffset }: Props) {
         </div>
     ) : (
         <div
-            className="container py-5 d-flex flex-column align-items-center justify-content-center vh-100"
-            style={{ marginTop: navbarOffset }}
+            className="container py-5 d-flex flex-column align-items-center justify-content-center"
+            style={{ height: `calc(100vh - ${navbarOffset}px` }}
         >
-            <div className="spinner-border" role="status">
+            <div className="spinner-border text-primary" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
+            <small className="text-muted mt-3">Loading Images...</small>
         </div>
     );
 }
