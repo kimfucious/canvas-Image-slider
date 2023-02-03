@@ -46,9 +46,9 @@ export default class SceneRenderer {
         let height = image.height * scaleFactor;
         let width = image.width * scaleFactor;
         /* 
-    This adds spacing around each image so they don't butt up against each other
-    It's not exactly like the demo, but I think it looks better :)
-    */
+        This adds spacing around each image so they don't butt up against each other
+        It's not exactly like the demo, but I think it looks better :)
+        */
         if (
             image.height >= ctx.canvas.height ||
             image.height >= ctx.canvas.height
