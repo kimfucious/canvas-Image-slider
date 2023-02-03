@@ -24,6 +24,7 @@ export default function Canvas({
     const frame = useRef(0);
     const isGrabbing = useRef(false);
     const isSlideAllowed = useRef(false);
+    const deltaX = useRef(0);
     const movementX = useRef(0);
     const previousTouchX = useRef(0);
     const sliderX = useRef(0);
@@ -31,7 +32,7 @@ export default function Canvas({
     useEffect(() => {
         function slideCanSlide() {
             const max = ImageLoader.getImagesLength();
-            return Slider.slideCanSlide(max, movementX, currentIndex)
+            return Slider.slideCanSlide(max, movementX, currentIndex);
         }
         const canvas = canvasRef.current;
         function handleSlide() {
@@ -96,6 +97,7 @@ export default function Canvas({
             canvas.ontouchstart = (e) => {
                 if (e.target === canvas) {
                     isGrabbing.current = true;
+                    deltaX.current = 0;
                     // console.log("I'm grabbing!");
                     setState({ ...state, isGrabbing: true });
                 } else {
@@ -108,18 +110,24 @@ export default function Canvas({
                     e.preventDefault();
                 }
                 const touch = e.targetTouches[0];
-                const deltaX =
+                console.log("touchX", touch.clientX);
+                console.log("previous", previousTouchX.current);
+                deltaX.current =
                     previousTouchX.current !== 0
                         ? touch.clientX - previousTouchX.current
                         : 0;
-                movementX.current += deltaX;
-                if (!slideCanSlide()) {
+                console.log("deltaX", deltaX.current);
+                movementX.current += deltaX.current;
+                const canIt = slideCanSlide();
+                console.log("canIt", canIt);
+                if (!canIt) {
+                    console.log("no can do");
                     isSlideAllowed.current = false;
-                    return;
                 } else {
+                    console.log("can do");
                     isSlideAllowed.current = true;
+                    sliderX.current += deltaX.current;
                 }
-                sliderX.current += deltaX;
                 previousTouchX.current = touch.clientX;
                 setState({ ...state, movement: sliderX.current });
             };
