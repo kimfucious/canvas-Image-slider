@@ -1,18 +1,15 @@
+import { ImageLoader } from "../../../../api";
+
 interface Props {
     currentIndex: React.MutableRefObject<number>;
     imagesCount: number;
     isLoading: boolean;
 }
-const isDev = process.env.NODE_ENV === "development";
-export default function ProgressIndicator({
-    currentIndex,
-    imagesCount,
-}: Props) {
-    return isDev ? (
+export default function ProgressIndicator({ currentIndex }: Props) {
+    const max = ImageLoader.getImagesLength();
+    return (
         <div>
-            {currentIndex.current + 1} of {`${imagesCount}`}
+            {currentIndex.current + 1} of {`${max}`}
         </div>
-    ) : (
-        <div>{currentIndex.current + 1} of &infin;</div>
     );
 }
