@@ -11,14 +11,15 @@ This is an example of how to create an HTML 5 Canvas API based image slider
 
 ## Notes
 
--   [Lorem Picsum](https://picsum.photos/) is used for images. The last image is 1084, but there are gaps. 
+-   [Lorem Picsum](https://picsum.photos/) is used for images. The last image is 1084, but there are gaps.
 -   Logic has been put in place to download valid IDs prior to starting the slide show.
 
 ## To Do
 
 -   At present, images are added to the DOM and the canvas, but they are not removed. This could get ugly after a certain point. Figure out how to remove the right amount at the right time to toward being performant.
--  This does not display nice on a mobile phone in landscape.
--  This does not adapt well when the orientation changes. 
+-   This does not display nice on a mobile phone in landscape.
+-   This does not adapt well when the orientation changes.
+-   Images are loaded on init, and more images are loaded when the current image index is ~half of the loaded images length. If you scroll too fast, the app plays catch-up, but needs to be more elegant.
 
 ## References
 
