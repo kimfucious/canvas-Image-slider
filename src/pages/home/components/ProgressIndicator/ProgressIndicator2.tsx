@@ -13,6 +13,6 @@ export default function ProgressIndicator({
             {currentIndex.current + 1} of {`${imagesCount}`}
         </div>
     ) : (
-        <div>{currentIndex.current + 1} of &infin; </div>
+        <div>{currentIndex.current + 1} of &infin;</div>
     );
 }
