@@ -31,6 +31,10 @@ export default class ImageLoader {
         this._imageIds = this._imageIds.slice(10);
     }
 
+    getImagesLength() {
+        return this._imageIds.length;
+    }
+
     getRandomImageSource(startPoint: number, idx: number): string {
         const widths = [320, 576, 640, 769, 1024];
         const width = widths[Math.floor(Math.random() * widths.length)];
