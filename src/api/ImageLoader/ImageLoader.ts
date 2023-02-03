@@ -1,6 +1,6 @@
 import axios from "axios";
 import { HomeState } from "../../pages/home";
-import { ImageDataResponse } from "../../types";
+import { ImageDataResponse, LoaderState } from "../../types";
 
 export default class ImageLoader {
     private _endpoint: string = "";
@@ -12,8 +12,15 @@ export default class ImageLoader {
         }
     }
 
-    async getImages() {
+    async getImages(
+        loading: LoaderState,
+        setLoading: (s: LoaderState) => void
+    ) {
         let page = 0;
+        setLoading({
+            isLoading: true,
+            val: 0,
+        });
         console.log("%c🐕 Fetching IDs from image api", "color:cyan");
         while (this._imageIds.length < 1000) {
             const { data } = await axios(
@@ -21,6 +28,10 @@ export default class ImageLoader {
             );
             const ids = data.map((item: ImageDataResponse) => item.id);
             this._imageIds = [...this._imageIds, ...ids];
+            setLoading({
+                ...loading,
+                val: this._imageIds.length,
+            });
             console.log(
                 `%c🐕 Fetched ${this._imageIds.length} IDs so far...`,
                 "color:cyan"
@@ -61,32 +72,53 @@ export default class ImageLoader {
     }
 
     async initImages(
-        isLoading: React.MutableRefObject<boolean>,
+        loadingImages: LoaderState,
+        setLoadingImages: (s: LoaderState) => void,
+        loadingImageSources: LoaderState,
+        setLoadingImageSources: (s: LoaderState) => void,
         qty: number,
         state: HomeState,
         setState: (s: HomeState) => void
     ): Promise<void> {
-        await this.getImages();
-        const startPoint = Math.floor(this._imageIds.length / 2);
+        await this.getImages(loadingImageSources, setLoadingImageSources);
+        // const startPoint = Math.floor(this._imageIds.length / 2);
+        const startPoint = 0 
         const sources = this.getRandomImageSources(startPoint, qty);
-        this.loadImages(true, isLoading, qty, sources, state, setState);
+        this.loadImages(
+            true,
+            loadingImages,
+            setLoadingImages,
+            qty,
+            sources,
+            state,
+            setState
+        );
     }
 
     loadMoreImages(
-        isLoading: React.MutableRefObject<boolean>,
+        loadingImages: LoaderState,
+        setLoadingImages: (s: LoaderState) => void,
         qty: number,
         state: HomeState,
         setState: (s: HomeState) => void
     ): void {
-        const mid = Math.floor(this._imageIds.length / 2);
-        const startPoint = mid + state.images.length;
+        const startPoint = state.images.length;
         const sources = this.getRandomImageSources(startPoint, qty);
-        this.loadImages(false, isLoading, qty, sources, state, setState);
+        this.loadImages(
+            false,
+            loadingImages,
+            setLoadingImages,
+            qty,
+            sources,
+            state,
+            setState
+        );
     }
 
     loadImages(
         isInitialLoad: boolean,
-        isLoading: React.MutableRefObject<boolean>,
+        loadingImages: LoaderState,
+        setLoadingImages: (s: LoaderState) => void,
         qty: number,
         sources: string[],
         state: HomeState,
@@ -94,11 +126,16 @@ export default class ImageLoader {
     ): void {
         let loadCount = 0;
         const loadedImages: HTMLImageElement[] = [];
-        isLoading.current = false;
+        setLoadingImages({ isLoading: true, val: 0 });
         sources.forEach((src, idx) => {
             const image = new Image();
             image.onload = function () {
                 loadCount++;
+                // this won't update... needs fixing!
+                setLoadingImages({
+                    ...loadingImages,
+                    val: loadingImages.val + 1,
+                });
                 if (loadCount === qty) {
                     isInitialLoad
                         ? console.log(
@@ -119,11 +156,15 @@ export default class ImageLoader {
                             ? loadedImages
                             : [...state.images, ...loadedImages],
                     });
-                    isLoading.current = false;
+                    // setLoadingImages({ isLoading: false, val: 0 });
+                    // setLoadingImages({ isLoading: true, val: 0 });
                 }
             };
             image.src = src;
             loadedImages[idx] = image;
         });
+        console.log("Updating final loading state");
+        // this needs to find the right spot!
+        setLoadingImages({ isLoading: false, val: 0 });
     }
 }

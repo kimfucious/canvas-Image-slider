@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ImageLoader } from "../../api";
+import { LoaderState } from "../../types";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import Canvas from "./components/";
-import ProgressIndicator from "./components/ProgressIndicator/";
 import config from "../../config/config.json";
+import ProgressBar from "./components/ProgressIndicator/ProgressBar";
+import ProgressIndicator from "./components/ProgressIndicator/";
 
 export interface HomeState {
     currentIndex: number;
@@ -30,14 +32,31 @@ interface Props {
 }
 export default function Home({ navbarOffset }: Props) {
     const currentIndex = useRef(0);
-    const isLoading = useRef(false);
     const [, viewportWidth] = useWindowSize();
     const [state, setState] = useState(initialState);
+    const [loadingImages, setLoadingImages] = useState<LoaderState>({
+        isLoading: false,
+        val: 0,
+    });
+    const [loadingImageSources, setLoadingImageSources] = useState<LoaderState>(
+        {
+            isLoading: false,
+            val: 0,
+        }
+    );
     const { SCENE_SIZE } = config;
 
     useEffect(() => {
         async function init() {
-            ImageLoader.initImages(isLoading, SCENE_SIZE, state, setState);
+            ImageLoader.initImages(
+                loadingImages,
+                setLoadingImages,
+                loadingImageSources,
+                setLoadingImageSources,
+                SCENE_SIZE,
+                state,
+                setState
+            );
         }
         if (!state.images.length && !state.currentIndex) {
             init();
@@ -45,7 +64,8 @@ export default function Home({ navbarOffset }: Props) {
             const mid = Math.floor(state.images.length / 2);
             if (state.currentIndex >= mid) {
                 ImageLoader.loadMoreImages(
-                    isLoading,
+                    loadingImages,
+                    setLoadingImages,
                     SCENE_SIZE,
                     state,
                     setState
@@ -68,33 +88,42 @@ export default function Home({ navbarOffset }: Props) {
         return { canvasHeight, canvasWidth };
     }, [viewportWidth]);
 
-    return state.images.length ? (
-        <div
-            className="container py-5 d-flex flex-column align-items-center justify-content-center"
-            style={{ marginTop: navbarOffset }}
-        >
-            <Canvas
-                currentIndex={currentIndex}
-                height={canvasHeight}
-                width={canvasWidth}
-                state={state}
-                setState={setState}
-            />
-            <ProgressIndicator
-                currentIndex={currentIndex}
-                imagesCount={state.images.length}
-                isLoading={isLoading.current}
-            />
-        </div>
-    ) : (
-        <div
-            className="container py-5 d-flex flex-column align-items-center justify-content-center"
-            style={{ height: `calc(100vh - ${navbarOffset}px` }}
-        >
-            <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-            <small className="text-muted mt-3">Loading Images...</small>
+    return (
+        <div className="container w-100">
+            {state.images.length && !loadingImages.isLoading && (
+                <div
+                    className="container py-5 d-flex flex-column align-items-center justify-content-center"
+                    style={{ marginTop: navbarOffset }}
+                >
+                    <Canvas
+                        currentIndex={currentIndex}
+                        height={canvasHeight}
+                        width={canvasWidth}
+                        state={state}
+                        setState={setState}
+                    />
+                    <ProgressIndicator
+                        currentIndex={currentIndex}
+                        imagesCount={state.images.length}
+                        loading={loadingImages}
+                        setLoading={setLoadingImages}
+                    />
+                </div>
+            )}
+            {!state.images.length &&
+                !loadingImages.isLoading &&
+                loadingImageSources.val > 0 && (
+                    <div
+                        className="container py-5 d-flex flex-column align-items-center justify-content-center w-100"
+                        style={{ height: `calc(100vh - ${navbarOffset}px` }}
+                    >
+                        <ProgressBar
+                            loading={loadingImageSources}
+                            message="Loading images sources..."
+                            total={1000}
+                        />
+                    </div>
+                )}
         </div>
     );
 }
