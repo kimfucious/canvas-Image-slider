@@ -38,8 +38,8 @@ export default class Slider {
                 currentIndex.current -= 1;
             }
             console.log(
-                `%cMoved to slide ${currentIndex.current}`,
-                "color:lime"
+                `%c🏄🏽‍♀️ Moved to slide ${currentIndex.current}`,
+                "color:cyan"
             );
         } else {
             console.log("%cGonna undo slide", "color:yellow");
