@@ -53,15 +53,10 @@ export default class Slider {
         movementX: MutableRefObject<number>,
         currentIndex: MutableRefObject<number>
     ) {
-        // console.log("movementX", movementX.current);
         const canSlideLeft =
             movementX.current < 0 && currentIndex.current < max;
         const canSlideRight =
             movementX.current > 0 && currentIndex.current !== 0;
-        // console.log("canSlideLeft", canSlideLeft);
-        // console.log("canSlideRight", canSlideRight);
-        // console.log("and", canSlideRight && canSlideLeft);
-        // console.log("or", canSlideRight || canSlideLeft);
         return canSlideLeft || canSlideRight;
     }
 }
