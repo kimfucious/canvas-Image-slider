@@ -5,7 +5,6 @@ import { ImageDataResponse } from "../../types";
 export default class ImageLoader {
     private _endpoint: string = "";
     private _imageIds: number[] = [];
-    private _counter: number = 0;
 
     constructor(endpoint: string) {
         if (endpoint) {
@@ -44,9 +43,7 @@ export default class ImageLoader {
         const height = Math.round(width / aspectRatio);
 
         const BASE_URL = this._endpoint;
-        // const id = startPoint + idx;
         const id = this._imageIds[startPoint + idx];
-        // const path = `id/${id}/${width}/${height}.webp`;
         const path =
             aspectRatio === 1
                 ? `id/${id}/${width}.webp`
@@ -102,7 +99,6 @@ export default class ImageLoader {
             const image = new Image();
             image.onload = function () {
                 loadCount++;
-                // console.log("%c🖼️ Image loaded:", "color:lime", image.src);
                 if (loadCount === qty) {
                     isInitialLoad
                         ? console.log(
