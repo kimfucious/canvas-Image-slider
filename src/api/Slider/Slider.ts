@@ -1,15 +1,7 @@
+import { MutableRefObject } from "react";
 import { HomeState } from "../../pages/home";
 
 export default class Slider {
-    // const canvas = canvasRef.current;
-    // private _canvas: React.MutableRefObject<CanvasRenderingContext2D> | null =
-    //     null;
-    // constructor(canvas: React.MutableRefObject<CanvasRenderingContext2D>) {
-    //     if (canvas) {
-    //         this._canvas = canvas;
-    //     }
-    // }
-
     handleSlide(
         canvas: HTMLCanvasElement,
         currentIndex: React.MutableRefObject<number>,
@@ -55,5 +47,16 @@ export default class Slider {
             isGrabbing: false,
         });
         movementX.current = 0;
+    }
+    slideCanSlide(
+        max: number,
+        movementX: MutableRefObject<number>,
+        currentIndex: MutableRefObject<number>
+    ) {
+        const canSlideLeft =
+            movementX.current < 0 && currentIndex.current < max;
+        const canSlideRight =
+            movementX.current > 0 && currentIndex.current !== 0;
+        return canSlideLeft || canSlideRight;
     }
 }

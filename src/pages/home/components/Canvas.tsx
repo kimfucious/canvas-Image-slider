@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ColorThemeMode } from "../../../types/colorTheme";
 import { HomeState } from "..";
-import { SceneRenderer, Slider } from "../../../api";
+import { ImageLoader, SceneRenderer, Slider } from "../../../api";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 
 interface Props {
@@ -30,7 +30,8 @@ export default function Canvas({
 
     useEffect(() => {
         function slideCanSlide() {
-            return !(movementX.current > 0 && currentIndex.current === 0);
+            const max = ImageLoader.getImagesLength();
+            return Slider.slideCanSlide(max, movementX, currentIndex)
         }
         const canvas = canvasRef.current;
         function handleSlide() {
