@@ -112,7 +112,7 @@ export default function Home({ navbarOffset }: Props) {
                     >
                         <ProgressBar
                             loading={loadingImageSources}
-                            message="Loading images sources..."
+                            message="Loading image sources..."
                             total={config.MAX_IMAGES}
                         />
                     </div>
