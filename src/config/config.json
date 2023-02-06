@@ -1,3 +1,5 @@
 {
-    "siteTitle": "Canvas Image Slider"
+    "siteTitle": "Canvas Image Slider",
+    "MAX_IMAGES": 993,
+    "SCENE_SIZE": 10 
 }
