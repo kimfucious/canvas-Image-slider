@@ -29,17 +29,74 @@ export default function Canvas({
     const previousTouchX = useRef(0);
     const sliderX = useRef(0);
 
+    // used for testing rapid slide changes
+    // useEffect(() => {
+    //     const canvas = canvasRef.current;
+    //     function slideCanSlide() {
+    //         const max = ImageLoader.getImagesLength();
+    //         return Slider.slideCanSlide(max, movementX, currentIndex);
+    //     }
+    //     function handleSlide() {
+    //         if (canvas) {
+    //             Slider.handleSlide(
+    //                 canvas,
+    //                 currentIndex,
+    //                 isGrabbing,
+    //                 isSlideAllowed,
+    //                 movementX,
+    //                 sliderX,
+    //                 state,
+    //                 setState
+    //             );
+    //         }
+    //     }
+    //     if (!canvas) return;
+    //     const keydownHandler = (e: globalThis.KeyboardEvent) => {
+    //         if (e.repeat) {
+    //             console.log("No repeat!");
+    //             return;
+    //         }
+    //         const key = e.key;
+    //         const amt = canvas.width;
+    //         if (key === "ArrowLeft" || key === "ArrowRight") {
+    //             isGrabbing.current = true;
+    //             if (key === "ArrowLeft") {
+    //                 movementX.current = amt;
+    //             }
+    //             if (key === "ArrowRight") {
+    //                 movementX.current = amt * -1;
+    //             }
+    //             if (!slideCanSlide()) {
+    //                 isSlideAllowed.current = false;
+    //                 movementX.current = 0;
+    //                 isGrabbing.current = false;
+    //                 return;
+    //             } else {
+    //                 isSlideAllowed.current = true;
+    //                 handleSlide();
+    //             }
+    //         }
+    //     };
+    //     document.addEventListener("keydown", (e) => keydownHandler(e));
+    //     return () => {
+    //         console.log("Cleaning up?");
+    //         document.removeEventListener("keydown", (e) => keydownHandler(e));
+    //     };
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
+
     useEffect(() => {
+        const canvas = canvasRef.current;
         function slideCanSlide() {
             const max = ImageLoader.getImagesLength();
             return Slider.slideCanSlide(max, movementX, currentIndex);
         }
-        const canvas = canvasRef.current;
         function handleSlide() {
             if (canvas) {
                 Slider.handleSlide(
                     canvas,
                     currentIndex,
+                    isGrabbing,
                     isSlideAllowed,
                     movementX,
                     sliderX,
@@ -151,6 +208,7 @@ export default function Canvas({
         function animate() {
             SceneRenderer.renderCanvas(canvasRef, isDark, state, sliderX);
             if (!isGrabbing.current) {
+                console.log("cancelling animation frame");
                 cancelAnimationFrame(frame.current);
                 // frame.current = 0
             } else {
