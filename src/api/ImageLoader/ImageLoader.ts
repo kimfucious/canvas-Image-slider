@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { HomeState } from "../../pages/home";
 import { ImageDataResponse, LoaderState } from "../../types";
 
@@ -16,33 +16,55 @@ export default class ImageLoader {
         loading: LoaderState,
         setLoading: (s: LoaderState) => void
     ) {
-        let page = 0;
         setLoading({
             isLoading: true,
             val: 0,
         });
-        console.log("%c🐕 Fetching valid image IDs from Lorem Picsum", "color:cyan");
-        while (this._imageIds.length < 1000) {
-            const { data } = await axios(
-                `https://picsum.photos/v2/list?page=${page}&limit=100`
+        console.log(
+            "%c🐕 Fetching valid image IDs from Lorem Picsum",
+            "color:cyan"
+        );
+        let imageIds: number[] = [];
+        let nextUrl:
+            | string
+            | null = `https://picsum.photos/v2/list?page=1&limit=100`;
+        while (nextUrl) {
+            if (!nextUrl) return;
+            const resp: AxiosResponse = await axios(nextUrl);
+            const ids = resp.data.map((item: ImageDataResponse) =>
+                Number(item.id)
             );
-            const ids = data.map((item: ImageDataResponse) => item.id);
-            this._imageIds = [...this._imageIds, ...ids];
+            imageIds = [...imageIds, ...ids];
             setLoading({
                 ...loading,
-                val: this._imageIds.length,
+                val: imageIds.length,
             });
             console.log(
-                `%c🐕 Fetched ${this._imageIds.length} IDs so far...`,
+                `%c🐕 Fetched ${imageIds.length} IDs so far...`,
                 "color:cyan"
             );
-            page++;
+            const next = resp.headers.link.split(" ");
+            const nextIdx = next.findIndex((item: string) =>
+                item.includes('rel="next"')
+            );
+            if (nextIdx !== -1) {
+                nextUrl = next[nextIdx - 1].slice(1, -2);
+            } else {
+                nextUrl = null;
+            }
         }
-        this._imageIds = this._imageIds.slice(10);
+        console.log("imageIds length", imageIds.length);
+        const result = imageIds.slice(10);
+        this._imageIds = result;
     }
 
     getImagesLength() {
         return this._imageIds.length;
+    }
+
+    getImageId(idx: number) {
+        // console.log("ids", this._imageIds);
+        return this._imageIds[idx];
     }
 
     getRandomImageSource(startPoint: number, idx: number): string {
@@ -82,7 +104,7 @@ export default class ImageLoader {
     ): Promise<void> {
         await this.getImages(loadingImageSources, setLoadingImageSources);
         // const startPoint = Math.floor(this._imageIds.length / 2);
-        const startPoint = 0 
+        const startPoint = 0;
         const sources = this.getRandomImageSources(startPoint, qty);
         this.loadImages(
             true,
