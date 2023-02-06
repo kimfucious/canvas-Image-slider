@@ -1,27 +1,20 @@
 import { ImageLoader } from "../../../../api";
-import type { LoaderState } from "../../../../types";
-import ProgressBar from "./ProgressBar";
 
 interface Props {
     currentIndex: React.MutableRefObject<number>;
-    imagesCount: number;
-    loading: LoaderState;
-    setLoading: (s: LoaderState) => void;
 }
-export default function ProgressIndicator({ currentIndex, loading }: Props) {
+export default function ProgressIndicator({ currentIndex }: Props) {
     const max = ImageLoader.getImagesLength();
+    const id = ImageLoader.getImageId(currentIndex.current);
+    const isDev = process.env.NODE_ENV === "development";
     return (
         <div>
-            {loading.isLoading && loading.val > 0 ? (
-                <ProgressBar
-                    loading={loading}
-                    message="Loading Images..."
-                    total={10}
-                />
+            {isDev ? (
+                <div>{`${
+                    currentIndex.current + 1
+                } of ${max} (imageId = ${id})`}</div>
             ) : (
-                <div>
-                    {currentIndex.current + 1} of {`${max}`}
-                </div>
+                <div>{`${currentIndex.current + 1} of ${max}`}</div>
             )}
         </div>
     );
