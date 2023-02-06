@@ -5,6 +5,7 @@ export default class Slider {
     handleSlide(
         canvas: HTMLCanvasElement,
         currentIndex: React.MutableRefObject<number>,
+        isGrabbing: React.MutableRefObject<boolean>,
         isSlideAllowed: React.MutableRefObject<boolean>,
         movementX: React.MutableRefObject<number>,
         sliderX: React.MutableRefObject<number>,
@@ -15,18 +16,34 @@ export default class Slider {
             if (!isSlideAllowed.current) {
                 console.log("%cSlide is disallowed", "color:yellow");
             }
+            isGrabbing.current = false;
             setState({ ...state, isGrabbing: false });
             movementX.current = 0;
             return;
         }
         const absMovementAmount = Math.abs(movementX.current);
+        console.log("abs", absMovementAmount);
         const diff = canvas.width - absMovementAmount;
+        console.log("diff", diff);
+        console.log("movementX", movementX.current);
+        console.log("currentSlide", currentIndex.current);
         if (isSlideAllowed.current) {
             if (movementX.current < 0) {
-                sliderX.current -= diff;
+                // diff is 0 when keyboard is used
+                if (diff === 0) {
+                    console.log("this is a keyboard slide to the left");
+                    sliderX.current -= absMovementAmount;
+                } else {
+                    sliderX.current -= diff;
+                }
                 currentIndex.current += 1;
             } else if (movementX.current > 0) {
-                sliderX.current += diff;
+                if (diff === 0) {
+                    console.log("this is a keyboard slide to the right");
+                    sliderX.current += absMovementAmount;
+                } else {
+                    sliderX.current += diff;
+                }
                 currentIndex.current -= 1;
             }
             console.log(
@@ -47,6 +64,8 @@ export default class Slider {
             isGrabbing: false,
         });
         movementX.current = 0;
+        isGrabbing.current = false;
+        console.log("new slide", currentIndex.current);
     }
     slideCanSlide(
         max: number,
