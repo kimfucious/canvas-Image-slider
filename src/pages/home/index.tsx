@@ -100,12 +100,7 @@ export default function Home({ navbarOffset }: Props) {
                         state={state}
                         setState={setState}
                     />
-                    <ProgressIndicator
-                        currentIndex={currentIndex}
-                        imagesCount={state.images.length}
-                        loading={loadingImages}
-                        setLoading={setLoadingImages}
-                    />
+                    <ProgressIndicator currentIndex={currentIndex} />
                 </div>
             )}
             {!state.images.length &&
@@ -118,7 +113,7 @@ export default function Home({ navbarOffset }: Props) {
                         <ProgressBar
                             loading={loadingImageSources}
                             message="Loading images sources..."
-                            total={1000}
+                            total={config.MAX_IMAGES}
                         />
                     </div>
                 )}
